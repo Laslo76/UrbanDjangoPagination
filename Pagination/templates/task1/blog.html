@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- INCLUDE CSS -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" type="text/css" rel="stylesheet">
+    <title>Блог для обучения пагинации</title>
+</head>
+<body>
+    <h1>ПАГИНАЦИЯ</h1>
+    {% for n in records %}
+        <h2>{{n.name}}</h2>
+        <p><i>{{n.category.name}}</i></p>
+        <p>{{n.text}}</p>
+    {% endfor %}
+
+     {% if records.has_other_pages %}
+    <nav class="list-pages">
+        <form action="/" method="get">
+            <label for="per_page">новостей на странице: </label>
+            <select id="per_page" name="per_page">
+                {% for i in set_page  %}
+                    {% if i == per_page %}
+                    <option selected value={{i}}>{{i}}</option>
+                    {% else %}
+                    <option value={{i}}>{{i}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <input type="submit" value="OK">
+        </form>
+    </nav>
+ <nav aria-label="Page navigation bootstrap">
+    <ul class="pagination justify-content-center">
+        {% if records.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page=1&per_page={{per_page}}">Первая</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ records.previous_page_number }}&per_page={{per_page}}"><span
+                aria-hidden="true">&laquo;</span></a></li>
+        {% endif %}
+        {% for num in records.paginator.page_range %}
+        {% if records.number == num %}
+        <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span>
+        </li>
+            {% elif num > records.number|add:'-3' and num < records.number|add:'3' %}
+        <li class="page-item"><a class="page-link" href="?page={{ num }}&per_page={{per_page}}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if records.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ records.next_page_number }}&per_page={{per_page}}"><span
+                aria-hidden="true">&raquo;</span></a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ records.paginator.num_pages }}&per_page={{per_page}}">Последняя</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+    {% endif %}
+</body>
+</html>
